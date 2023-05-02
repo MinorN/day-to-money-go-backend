@@ -2,7 +2,7 @@
 // versions:
 //   sqlc v1.18.0
 
-package sqlc
+package queries
 
 import (
 	"time"
@@ -11,6 +11,7 @@ import (
 type User struct {
 	ID       int32
 	Email    string
+	Phone    string
 	CreateAt time.Time
 	UpdateAt time.Time
 }

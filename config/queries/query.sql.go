@@ -3,14 +3,14 @@
 //   sqlc v1.18.0
 // source: query.sql
 
-package sqlc
+package queries
 
 import (
 	"context"
 )
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users (email) values ($1) RETURNING id, email, create_at, update_at
+INSERT INTO users (email) values ($1) RETURNING id, email, phone, create_at, update_at
 `
 
 func (q *Queries) CreateUser(ctx context.Context, email string) (User, error) {
@@ -19,6 +19,7 @@ func (q *Queries) CreateUser(ctx context.Context, email string) (User, error) {
 	err := row.Scan(
 		&i.ID,
 		&i.Email,
+		&i.Phone,
 		&i.CreateAt,
 		&i.UpdateAt,
 	)
