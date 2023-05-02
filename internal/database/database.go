@@ -1,9 +1,12 @@
 package database
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log"
+	"mangosteen/config/queries"
+	"math/rand"
 	"os"
 	"os/exec"
 	"time"
@@ -14,6 +17,7 @@ import (
 )
 
 var DB *sql.DB
+var DBCtx = context.Background()
 
 const (
 	host     = "pg-for-go-mangosteen"
@@ -24,8 +28,17 @@ const (
 )
 
 func Connect() {
-	// dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-	// 	host, port, user, password, dbname)
+	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
+	db, err := sql.Open("postgres", dsn)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	DB = db
+	err = db.Ping()
+	if err != nil {
+		log.Fatalln(err)
+	}
 }
 
 type User struct {
@@ -97,6 +110,14 @@ func MigrateDown() {
 }
 
 func Crud() {
+	q := queries.New(DB)
+	id := rand.Int()
+
+	u, err := q.CreateUser(DBCtx, fmt.Sprintf("%d@qq.com", id))
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println(u)
 }
 
 func Close() {
