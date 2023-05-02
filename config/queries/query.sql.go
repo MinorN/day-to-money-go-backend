@@ -25,3 +25,127 @@ func (q *Queries) CreateUser(ctx context.Context, email string) (User, error) {
 	)
 	return i, err
 }
+
+const deleteUser = `-- name: DeleteUser :exec
+DELETE FROM users
+WHERE id = $1
+`
+
+func (q *Queries) DeleteUser(ctx context.Context, id int32) error {
+	_, err := q.db.ExecContext(ctx, deleteUser, id)
+	return err
+}
+
+const findByEmail = `-- name: FindByEmail :one
+SELECT id, email, phone, create_at, update_at from users
+WHERE email = $1
+`
+
+func (q *Queries) FindByEmail(ctx context.Context, email string) (User, error) {
+	row := q.db.QueryRowContext(ctx, findByEmail, email)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Phone,
+		&i.CreateAt,
+		&i.UpdateAt,
+	)
+	return i, err
+}
+
+const findByPhone = `-- name: FindByPhone :one
+SELECT id, email, phone, create_at, update_at from users
+WHERE phone = $1
+`
+
+func (q *Queries) FindByPhone(ctx context.Context, phone string) (User, error) {
+	row := q.db.QueryRowContext(ctx, findByPhone, phone)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Phone,
+		&i.CreateAt,
+		&i.UpdateAt,
+	)
+	return i, err
+}
+
+const findUser = `-- name: FindUser :one
+SELECT id, email, phone, create_at, update_at from users
+WHERE id = $1
+`
+
+func (q *Queries) FindUser(ctx context.Context, id int32) (User, error) {
+	row := q.db.QueryRowContext(ctx, findUser, id)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Phone,
+		&i.CreateAt,
+		&i.UpdateAt,
+	)
+	return i, err
+}
+
+const listUsers = `-- name: ListUsers :many
+SELECT id, email, phone, create_at, update_at from users
+ORDER BY id
+OFFSET $1
+LIMIT $2
+`
+
+type ListUsersParams struct {
+	Offset int32
+	Limit  int32
+}
+
+func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]User, error) {
+	rows, err := q.db.QueryContext(ctx, listUsers, arg.Offset, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []User
+	for rows.Next() {
+		var i User
+		if err := rows.Scan(
+			&i.ID,
+			&i.Email,
+			&i.Phone,
+			&i.CreateAt,
+			&i.UpdateAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const updateUser = `-- name: UpdateUser :exec
+UPDATE users SET 
+    email = $2,
+    phone = $3
+WHERE
+    id = $1
+`
+
+type UpdateUserParams struct {
+	ID    int32
+	Email string
+	Phone string
+}
+
+func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
+	_, err := q.db.ExecContext(ctx, updateUser, arg.ID, arg.Email, arg.Phone)
+	return err
+}

@@ -118,6 +118,34 @@ func Crud() {
 		log.Fatalln(err)
 	}
 	log.Println(u)
+	err = q.UpdateUser(DBCtx, queries.UpdateUserParams{
+		ID:    u.ID,
+		Email: u.Email,
+		Phone: "123456",
+	})
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	users, err := q.ListUsers(DBCtx, queries.ListUsersParams{
+		Offset: 0,
+		Limit:  10,
+	})
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println(users)
+
+	u, err = q.FindUser(DBCtx, users[0].ID)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println(u)
+
+	err = q.DeleteUser(DBCtx, u.ID)
+	if err != nil {
+		log.Fatalln(err)
+	}
 }
 
 func Close() {
