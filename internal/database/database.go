@@ -45,7 +45,6 @@ type User struct {
 	ID        int
 	Email     string `gorm:"uniqueIndex"`
 	Phone     string
-	Address2  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
@@ -71,6 +70,11 @@ func CreateMigration(filename string) {
 }
 func Migrate() {
 	dir, err := os.Getwd()
+	// name := filepath.Base(dir)
+	// for !strings.Contains(name, "mangosteen") {
+	// 	dir = filepath.Dir(dir)
+	// 	name = filepath.Base(dir)
+	// }
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -85,7 +89,9 @@ func Migrate() {
 	}
 	err = m.Up()
 	if err != nil {
+		// if !strings.Contains(err.Error(), "no change") {
 		log.Fatalln(err)
+		// }
 	}
 }
 
@@ -112,40 +118,40 @@ func MigrateDown() {
 func Crud() {
 	q := queries.New(DB)
 	id := rand.Int()
-
 	u, err := q.CreateUser(DBCtx, fmt.Sprintf("%d@qq.com", id))
 	if err != nil {
 		log.Fatalln(err)
 	}
-	log.Println(u)
 	err = q.UpdateUser(DBCtx, queries.UpdateUserParams{
 		ID:    u.ID,
 		Email: u.Email,
-		Phone: "123456",
+		Phone: u.Phone,
 	})
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	users, err := q.ListUsers(DBCtx, queries.ListUsersParams{
-		Offset: 0,
-		Limit:  10,
-	})
-	if err != nil {
-		log.Fatalln(err)
-	}
-	log.Println(users)
-
-	u, err = q.FindUser(DBCtx, users[0].ID)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	log.Println(u)
-
-	err = q.DeleteUser(DBCtx, u.ID)
-	if err != nil {
-		log.Fatalln(err)
-	}
+	// users, err := q.ListUsers(DBCtx, queries.ListUsersParams{
+	// 	Offset: 0,
+	// 	Limit:  10,
+	// })
+	// if err != nil {
+	// 	log.Fatalln(err)
+	// }
+	// log.Println(users)
+	// log.Println(u)
+	// err = q.DeleteUser(DBCtx, u.ID)
+	// if err != nil {
+	// 	log.Fatalln(err)
+	// }
+	// users, err = q.ListUsers(DBCtx, queries.ListUsersParams{
+	// 	Offset: 0,
+	// 	Limit:  10,
+	// })
+	// if err != nil {
+	// 	log.Fatalln(err)
+	// }
+	// log.Println(users)
 }
 
 func Close() {
