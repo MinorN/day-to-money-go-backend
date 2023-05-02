@@ -12,23 +12,14 @@ func Run() {
 	rootCmd := &cobra.Command{
 		Use: "mangosteen",
 	}
-
 	srvCmd := &cobra.Command{
 		Use: "server",
 		Run: func(cmd *cobra.Command, args []string) {
 			RunServer()
 		},
 	}
-
 	dbCmd := &cobra.Command{
 		Use: "db",
-	}
-
-	createCmd := &cobra.Command{
-		Use: "create",
-		Run: func(cmd *cobra.Command, args []string) {
-			database.CreateTables()
-		},
 	}
 
 	mgrtCmd := &cobra.Command{
@@ -37,7 +28,12 @@ func Run() {
 			database.Migrate()
 		},
 	}
-
+	mgrtDownCmd := &cobra.Command{
+		Use: "migrate:down",
+		Run: func(cmd *cobra.Command, args []string) {
+			database.MigrateDown()
+		},
+	}
 	crudCmd := &cobra.Command{
 		Use: "crud",
 		Run: func(cmd *cobra.Command, args []string) {
@@ -45,15 +41,12 @@ func Run() {
 		},
 	}
 
-	rootCmd.AddCommand(srvCmd, dbCmd)
-
-	dbCmd.AddCommand(createCmd, mgrtCmd, crudCmd)
-
 	database.Connect()
 	defer database.Close()
 
+	rootCmd.AddCommand(srvCmd, dbCmd)
+	dbCmd.AddCommand(mgrtCmd, crudCmd, mgrtDownCmd)
 	rootCmd.Execute()
-
 }
 
 func RunServer() {
@@ -62,4 +55,6 @@ func RunServer() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	log.Println("r.Run 的下一行")
+
 }

@@ -1,15 +1,19 @@
 package database
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
+	"os"
+	"os/exec"
 	"time"
 
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
-var DB *gorm.DB
+var DB *sql.DB
 
 const (
 	host     = "pg-for-go-mangosteen"
@@ -20,89 +24,80 @@ const (
 )
 
 func Connect() {
-	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil {
-		log.Fatalln(err)
-	}
-	DB = db
-
+	// dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+	// 	host, port, user, password, dbname)
 }
 
 type User struct {
-	ID       int
-	Email    string `gorm:"uniqueIndex"`
-	Phone    string
-	Address  string
-	CreateAt time.Time
-	UpdateAt time.Time
+	ID        int
+	Email     string `gorm:"uniqueIndex"`
+	Phone     string
+	Address2  string
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
-
 type Item struct {
 	ID         int
 	UserID     int
 	Amount     int
 	HappenedAt time.Time
-	CreateAt   time.Time
-	UpdateAt   time.Time
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
 }
-
 type Tag struct {
 	ID   int
 	Name string
 }
 
-var models = []any{&User{}, &Item{}, &Tag{}}
-
-func CreateTables() {
-	for _, model := range models {
-		err := DB.Migrator().CreateTable(model)
-		if err != nil {
-			log.Println(err)
-		}
-	}
-}
-
-func Migrate() {
-	DB.AutoMigrate(models...)
-}
-
-func Crud() {
-	// // 创建一个User
-	// user := User{Email: "test3@qq.com"}
-	// tx := DB.Create(&user)
-	// log.Println(tx.RowsAffected)
-	// log.Println(user)
-
-	// u2 := User{}
-	// tx = DB.Find(&u2, 1)
-	// u2.Phone = "12345678"
-	// tx = DB.Save(&u2)
-	// if tx.Error != nil {
-	// 	log.Println(tx.Error)
-	// } else {
-	// 	log.Println(tx.RowsAffected)
-	// 	log.Println(u2)
-	// }
-
-	users := []User{}
-	DB.Find(&users, []int{1, 3, 6})
-	log.Println(users)
-
-	u := User{ID: 1}
-	tx := DB.Delete(&u)
-	if tx.Error != nil {
-		log.Println(tx.Error)
-	} else {
-		log.Println(tx.RowsAffected)
-	}
-}
-
-func Close() {
-	sqlDB, err := DB.DB()
+func CreateMigration(filename string) {
+	cmd := exec.Command("migrate", "create", "-ext", "sql", "-dir", "config/migrations", "-seq", filename)
+	err := cmd.Run()
 	if err != nil {
 		log.Fatalln(err)
 	}
-	sqlDB.Close()
+}
+func Migrate() {
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	m, err := migrate.New(
+		fmt.Sprintf("file://%s/config/migrations", dir),
+		fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable",
+			user, password, host, port, dbname,
+		))
+	if err != nil {
+		log.Fatalln(err)
+	}
+	err = m.Up()
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
+
+func MigrateDown() {
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	m, err := migrate.New(
+		fmt.Sprintf("file://%s/config/migrations", dir),
+		fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable",
+			user, password, host, port, dbname,
+		))
+	if err != nil {
+		log.Fatalln(err)
+	}
+	err = m.Steps(-1)
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
+
+func Crud() {
+}
+
+func Close() {
 }
