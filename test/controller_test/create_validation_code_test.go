@@ -1,9 +1,11 @@
 package controller_test
 
 import (
+	"log"
 	"mangosteen/internal/router"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 
@@ -11,6 +13,8 @@ import (
 )
 
 func TestCreateValidationCode(t *testing.T) {
+	pwd, _ := os.Getwd()
+	log.Println(pwd)
 	r := router.New()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest(

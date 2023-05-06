@@ -1,6 +1,7 @@
 package router
 
 import (
+	"mangosteen/config"
 	"mangosteen/internal/controller"
 
 	"mangosteen/docs"
@@ -11,6 +12,9 @@ import (
 )
 
 func New() *gin.Engine {
+	// 测试使用
+	config.LoadViperConfig()
+
 	docs.SwaggerInfo.Version = "1.0"
 
 	r := gin.Default()
