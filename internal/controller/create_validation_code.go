@@ -2,6 +2,7 @@ package controller
 
 import (
 	"log"
+	"mangosteen/internal/email"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,12 +17,17 @@ import (
 // @Router       /validation_codes [get]
 func CreateValidationCode(c *gin.Context) {
 	var body struct {
-		Email string
+		Email string `json:"email" binding:"required,email"`
 	}
-	err := c.ShouldBind(&body)
-	if err != nil {
+
+	if err := c.ShouldBind(&body); err != nil {
 		c.String(400, "参数错误")
 		return
 	}
-	log.Println(body.Email)
+	if err := email.SendValidationCode(body.Email, "123456"); err != nil {
+		log.Print("[SendValidationCode fail]", err)
+		c.String(500, "发送失败")
+		return
+	}
+	c.Status(200)
 }
