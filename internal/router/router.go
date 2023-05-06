@@ -3,6 +3,7 @@ package router
 import (
 	"mangosteen/config"
 	"mangosteen/internal/controller"
+	"mangosteen/internal/database"
 
 	"mangosteen/docs"
 
@@ -14,10 +15,10 @@ import (
 func New() *gin.Engine {
 	// 测试使用
 	config.LoadViperConfig()
-
+	r := gin.Default()
 	docs.SwaggerInfo.Version = "1.0"
 
-	r := gin.Default()
+	database.Connect()
 
 	r.GET("/api/v1/ping", controller.Ping)
 
