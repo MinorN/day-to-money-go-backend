@@ -10,6 +10,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type RequestBody struct {
+	Email string `json:"email" binding:"required"`
+	Code  string `json:"code" binding:"required"`
+}
+
 // CreateSession
 // @Summary      用来发送邮箱验证码
 // @Description  接受邮箱地址，发送验证码
@@ -17,12 +22,11 @@ import (
 // @Produce      json
 // @Success      200
 // @Failure      500
-// @Router       /validation_codes [post]
+// @Router       /session [post]
+// @Param	email body string true "邮箱地址"
+// @Param	code body string true "验证码"
 func CreateSession(c *gin.Context) {
-	var requestBody struct {
-		Email string `json:"email" binding:"required"`
-		Code  string `json:"code" binding:"required"`
-	}
+	var requestBody RequestBody
 	if err := c.ShouldBindJSON(&requestBody); err != nil {
 		c.String(http.StatusBadRequest, "参数错误")
 		return

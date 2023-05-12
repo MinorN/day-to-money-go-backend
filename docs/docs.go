@@ -25,14 +25,54 @@ const docTemplate = `{
     "paths": {
         "/ping": {
             "get": {
-                "description": "用来测试 API 是否正常工作xxx",
+                "description": "用来测试 API 是否正常工作",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "用来测试 API 是否正常工作xxx",
+                "summary": "用来测试 API 是否正常工作",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/session": {
+            "post": {
+                "description": "接受邮箱地址，发送验证码",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "用来发送邮箱验证码",
+                "parameters": [
+                    {
+                        "description": "邮箱地址",
+                        "name": "email",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "验证码",
+                        "name": "code",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -53,6 +93,17 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "summary": "用来发送邮箱验证码",
+                "parameters": [
+                    {
+                        "description": "邮箱地址",
+                        "name": "email",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK"

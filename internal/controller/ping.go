@@ -7,8 +7,8 @@ import (
 )
 
 // Ping godoc
-// @Summary      用来测试 API 是否正常工作xxx
-// @Description  用来测试 API 是否正常工作xxx
+// @Summary      用来测试 API 是否正常工作
+// @Description  用来测试 API 是否正常工作
 // @Accept       json
 // @Produce      json
 // @Success      200

@@ -11,16 +11,17 @@ import (
 )
 
 type Body struct {
-	Email string `json:"email" binding:"required,email"`
+	Email string `json:"email"  binding:"required,email"`
 }
 
-// CreateValidationCode
+// Body model info
 // @Summary      用来发送邮箱验证码
 // @Description  接受邮箱地址，发送验证码
 // @Accept       json
 // @Produce      json
 // @Success      200
 // @Failure      500
+// @Param	email body string true "邮箱地址"
 // @Router       /validation_codes [post]
 func CreateValidationCode(c *gin.Context) {
 	var body Body

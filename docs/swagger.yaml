@@ -17,7 +17,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: 用来测试 API 是否正常工作xxx
+      description: 用来测试 API 是否正常工作
       produces:
       - application/json
       responses:
@@ -25,12 +25,45 @@ paths:
           description: OK
         "500":
           description: Internal Server Error
-      summary: 用来测试 API 是否正常工作xxx
+      summary: 用来测试 API 是否正常工作
+  /session:
+    post:
+      consumes:
+      - application/json
+      description: 接受邮箱地址，发送验证码
+      parameters:
+      - description: 邮箱地址
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      - description: 验证码
+        in: body
+        name: code
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+      summary: 用来发送邮箱验证码
   /validation_codes:
     post:
       consumes:
       - application/json
       description: 接受邮箱地址，发送验证码
+      parameters:
+      - description: 邮箱地址
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
       produces:
       - application/json
       responses:
