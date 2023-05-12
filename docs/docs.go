@@ -10,7 +10,14 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "contact": {},
+        "contact": {
+            "name": "小N",
+            "url": "https://MinorN.com",
+            "email": "magicminorn@gmail.com"
+        },
+        "license": {
+            "name": "MIT"
+        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -18,14 +25,34 @@ const docTemplate = `{
     "paths": {
         "/ping": {
             "get": {
-                "description": "用来测试 API 是否正常",
+                "description": "用来测试 API 是否正常工作xxx",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "用来测试 API 是否正常",
+                "summary": "用来测试 API 是否正常工作xxx",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/validation_codes": {
+            "post": {
+                "description": "接受邮箱地址，发送验证码",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "用来发送邮箱验证码",
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -36,17 +63,26 @@ const docTemplate = `{
                 }
             }
         }
+    },
+    "securityDefinitions": {
+        "BasicAuth(JWT)": {
+            "type": "basic"
+        }
+    },
+    "externalDocs": {
+        "description": "OpenAPI",
+        "url": "https://swagger.io/resources/open-api/"
     }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "",
-	Host:             "",
-	BasePath:         "",
+	Host:             "localhost:8080",
+	BasePath:         "/api/v1",
 	Schemes:          []string{},
-	Title:            "",
-	Description:      "",
+	Title:            "山竹记账 API",
+	Description:      "这是本项目的所有 API 的文档",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

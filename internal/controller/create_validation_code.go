@@ -21,7 +21,7 @@ type Body struct {
 // @Produce      json
 // @Success      200
 // @Failure      500
-// @Router       /validation_codes [get]
+// @Router       /validation_codes [post]
 func CreateValidationCode(c *gin.Context) {
 	var body Body
 	if err := c.ShouldBind(&body); err != nil {

@@ -10,6 +10,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// CreateSession
+// @Summary      用来发送邮箱验证码
+// @Description  接受邮箱地址，发送验证码
+// @Accept       json
+// @Produce      json
+// @Success      200
+// @Failure      500
+// @Router       /validation_codes [post]
 func CreateSession(c *gin.Context) {
 	var requestBody struct {
 		Email string `json:"email" binding:"required"`

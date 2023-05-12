@@ -1,19 +1,50 @@
 {
     "swagger": "2.0",
     "info": {
-        "contact": {}
+        "description": "这是本项目的所有 API 的文档",
+        "title": "山竹记账 API",
+        "contact": {
+            "name": "小N",
+            "url": "https://MinorN.com",
+            "email": "magicminorn@gmail.com"
+        },
+        "license": {
+            "name": "MIT"
+        }
     },
+    "host": "localhost:8080",
+    "basePath": "/api/v1",
     "paths": {
         "/ping": {
             "get": {
-                "description": "用来测试 API 是否正常",
+                "description": "用来测试 API 是否正常工作xxx",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "用来测试 API 是否正常",
+                "summary": "用来测试 API 是否正常工作xxx",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/validation_codes": {
+            "post": {
+                "description": "接受邮箱地址，发送验证码",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "用来发送邮箱验证码",
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -24,5 +55,14 @@
                 }
             }
         }
+    },
+    "securityDefinitions": {
+        "BasicAuth(JWT)": {
+            "type": "basic"
+        }
+    },
+    "externalDocs": {
+        "description": "OpenAPI",
+        "url": "https://swagger.io/resources/open-api/"
     }
 }
