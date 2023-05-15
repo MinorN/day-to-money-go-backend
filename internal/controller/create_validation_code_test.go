@@ -18,7 +18,9 @@ func TestCreateValidationCode(t *testing.T) {
 	r = gin.Default()
 	config.LoadViperConfig()
 	database.Connect()
-	r.POST("/api/v1/session", CreateValidationCode)
+
+	vcc := SessionController{}
+	vcc.RegisterRoutes(r.Group("/api"))
 
 	email := "test@test.com"
 	c := context.Background()
