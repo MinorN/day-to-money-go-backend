@@ -12,6 +12,13 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+func loadControllers() []controller.Controller {
+	return []controller.Controller{
+		&controller.SessionController{},
+		&controller.ValidationCodeController{},
+	}
+}
+
 func New() *gin.Engine {
 	// 测试使用
 	config.LoadViperConfig()
@@ -23,11 +30,10 @@ func New() *gin.Engine {
 	r.GET("/ping", controller.Ping)
 
 	api := r.Group("/api")
-	sc := controller.SessionController{}
-	sc.RegisterRoutes(api)
-
-	vcc := controller.ValidationCodeController{}
-	vcc.RegisterRoutes(api)
+	cs := loadControllers()
+	for _, c := range cs {
+		c.RegisterRoutes(api)
+	}
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
