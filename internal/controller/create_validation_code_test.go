@@ -1,19 +1,25 @@
-package controller_test
+package controller
 
 import (
 	"context"
+	"mangosteen/config"
 	"mangosteen/internal/database"
-	"mangosteen/internal/router"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
+	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateValidationCode(t *testing.T) {
-	r := router.New()
+
+	r = gin.Default()
+	config.LoadViperConfig()
+	database.Connect()
+	r.POST("/api/v1/session", CreateValidationCode)
+
 	email := "test@test.com"
 	c := context.Background()
 	q := database.NewQuery()

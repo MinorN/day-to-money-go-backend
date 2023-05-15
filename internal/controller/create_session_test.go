@@ -23,6 +23,7 @@ var (
 )
 
 func setupTest(t *testing.T) func(t *testing.T) {
+
 	r = gin.Default()
 	config.LoadViperConfig()
 	database.Connect()
