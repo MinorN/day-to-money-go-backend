@@ -1,12 +1,12 @@
-package controller_test
+package controller
 
 import (
 	"context"
 	"encoding/json"
 	"log"
+	"mangosteen/config"
 	"mangosteen/config/queries"
 	"mangosteen/internal/database"
-	"mangosteen/internal/router"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -23,29 +23,31 @@ var (
 )
 
 func setupTest(t *testing.T) func(t *testing.T) {
+	r = gin.Default()
+	config.LoadViperConfig()
+	database.Connect()
+	r.POST("/api/v1/session", CreateSession)
+
 	q = database.NewQuery()
-	r = router.New()
 	c = context.Background()
 	if err := q.DeleteAllUsers(c); err != nil {
 		t.Fatal(err)
 	}
 	return func(t *testing.T) {
-		database.DB.Close()
+		database.Close()
 	}
+
 }
 
 func TestCreateSession(t *testing.T) {
 	teardownTest := setupTest(t)
 	defer teardownTest(t)
+
 	email := "1@qq.com"
 	code := "1234"
-	q := database.NewQuery()
-	_, err := q.CreateValidationCode(c, queries.CreateValidationCodeParams{
-		Email: email,
-		Code:  code,
-	})
-
-	if err != nil {
+	if _, err := q.CreateValidationCode(c, queries.CreateValidationCodeParams{
+		Email: email, Code: code,
+	}); err != nil {
 		log.Fatalln(err)
 	}
 	user, err := q.CreateUser(c, email)
@@ -53,8 +55,11 @@ func TestCreateSession(t *testing.T) {
 		log.Fatalln(err)
 	}
 	w := httptest.NewRecorder()
-	x := gin.H{"email": email, "code": code}
-	bytes, _ := json.Marshal(x)
+	j := gin.H{
+		"email": email,
+		"code":  code,
+	}
+	bytes, _ := json.Marshal(j)
 	req, _ := http.NewRequest(
 		"POST",
 		"/api/v1/session",
